@@ -1,0 +1,4 @@
+requests >= 2.7.0, < 3.0.0
+requests - futures == 0.9.7
+defusedxml
+certifi
