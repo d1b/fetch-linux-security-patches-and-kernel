@@ -3,8 +3,10 @@ from __future__ import print_function
 
 import lzma
 import os
-import requests
+import re
 import tempfile
+
+import requests
 from requests_futures.sessions import FuturesSession
 
 
@@ -29,6 +31,22 @@ def get_latest_unofficial_grsec_patch_and_sig_url():
         if name.endswith('.diff'):
             download_url = browser_url
         elif name.endswith('.diff.sig'):
+            sig_download_url = browser_url
+    return download_url, sig_download_url
+
+
+def get_latest_linux_hardened_patch_and_sig_url():
+    url = ('https://api.github.com/repos/thestinger/'
+           'linux-hardened/releases/latest')
+    response = requests.get(url)
+    response.raise_for_status()
+    data = response.json()
+    for asset in data['assets']:
+        name = asset['name']
+        browser_url = asset['browser_download_url']
+        if name.endswith('.patch'):
+            download_url = browser_url
+        elif name.endswith('.patch.sig'):
             sig_download_url = browser_url
     return download_url, sig_download_url
 
@@ -64,14 +82,28 @@ def extract_lzma_file(full_lzma_file_path, extract_to=None):
     l_file.close()
 
 
-def main():
+def download_linux_hardened():
+    download_url, sig_download_url = (
+        get_latest_linux_hardened_patch_and_sig_url())
+    kernel_version = re.match(
+        r'linux\-hardened\-(?P<ver>[\d\.\d]+)\..*',
+        download_url.split('/')[-1]
+    ).group('ver')
+    _download(download_url, sig_download_url, kernel_version)
+
+
+def download_grsec():
     download_url, sig_download_url = (
         get_latest_unofficial_grsec_patch_and_sig_url())
     kernel_version = get_associated_kernel_version(download_url)
+    _download(download_url, sig_download_url, kernel_version)
+
+
+def _download(download_url, sig_download_url, kernel_version):
     k_download_url, k_sig_download_url = get_kernel_download_and_sig_url(
         kernel_version)
-    dl_directory = tempfile.mkdtemp(prefix='unofficial-grsec-download')
-    print('Downloading unofficial grsec (%s) and kernel files to %s' % (
+    dl_directory = tempfile.mkdtemp(prefix='linux-security-download')
+    print('Downloading patch (%s) and kernel files to %s' % (
         download_url.split('/')[-1], dl_directory))
     async_session = FuturesSession(max_workers=4)
     futures = []

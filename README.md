@@ -1,2 +1,3 @@
-# fetch-grsec-patches-and-kernel
-Download the latest unofficial 4.9 grsecurity patches and the matching linux kernel version.
+# fetch-linux-security-patches-and-kernel
+Download the latest linux-hardened or unofficial grsecurity 4.9 patch and the matching linux kernel version.
+
