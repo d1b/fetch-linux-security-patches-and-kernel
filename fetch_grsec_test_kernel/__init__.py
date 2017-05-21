@@ -5,19 +5,31 @@ import lzma
 import os
 import requests
 import tempfile
-from defusedxml import ElementTree
 from requests_futures.sessions import FuturesSession
 
 
 def get_associated_kernel_version(grsec_download_url):
-    return grsec_download_url.split('/')[-1].split('-')[2]
+    version = grsec_download_url.split('/')[-1].split('-')[0].strip('v')
+    return version
 
 
-def get_latest_grsec_test_patch_and_sig_url():
-    response = requests.get('https://grsecurity.net/testing_rss.php')
-    doc = ElementTree.fromstring(response.content)
-    download_url = doc.findall('.//guid')[-1].text
-    sig_download_url = download_url + '.sig'
+def get_latest_unofficial_grsec_patch_and_sig_url():
+    download_url = None
+    sig_download_url = None
+    url = ('https://api.github.com/repos/minipli/'
+           'linux-unofficial_grsec/releases/latest')
+    response = requests.get(url)
+    response.raise_for_status()
+    data = response.json()
+    for asset in data['assets']:
+        name = asset['name']
+        browser_url = asset['browser_download_url']
+        if 'unofficial_grsec' not in name:
+            continue
+        if name.endswith('.diff'):
+            download_url = browser_url
+        elif name.endswith('.diff.sig'):
+            sig_download_url = browser_url
     return download_url, sig_download_url
 
 
@@ -53,12 +65,14 @@ def extract_lzma_file(full_lzma_file_path, extract_to=None):
 
 
 def main():
-    download_url, sig_download_url = get_latest_grsec_test_patch_and_sig_url()
+    download_url, sig_download_url = (
+        get_latest_unofficial_grsec_patch_and_sig_url())
     kernel_version = get_associated_kernel_version(download_url)
     k_download_url, k_sig_download_url = get_kernel_download_and_sig_url(
         kernel_version)
-    dl_directory = tempfile.mkdtemp(prefix='grsec-download')
-    print('Downloading grsec and kernel files to %s' % dl_directory)
+    dl_directory = tempfile.mkdtemp(prefix='unofficial-grsec-download')
+    print('Downloading unofficial grsec (%s) and kernel files to %s' % (
+        download_url.split('/')[-1], dl_directory))
     async_session = FuturesSession(max_workers=4)
     futures = []
     for url in [download_url, sig_download_url,
@@ -76,4 +90,3 @@ def main():
                 extract_lzma_file(full_f_path)
         except Exception as e:
             print('downloading %s failed %s' % (safe_filename, e))
-
