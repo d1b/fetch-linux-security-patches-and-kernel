@@ -36,7 +36,7 @@ def get_latest_unofficial_grsec_patch_and_sig_url():
 
 
 def get_latest_linux_hardened_patch_and_sig_url():
-    url = ('https://api.github.com/repos/thestinger/'
+    url = ('https://api.github.com/repos/copperhead/'
            'linux-hardened/releases/latest')
     response = requests.get(url)
     response.raise_for_status()
