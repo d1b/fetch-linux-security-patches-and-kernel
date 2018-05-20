@@ -1,0 +1,17 @@
+CHANGES
+=======
+
+1.0.0
+-----
+
+* Sem-Ver: api-break change the default patch to anthraxx's linux-hardened patch
+* Sem-Ver: feature Support downloading anthraxx's fork of the linux-hardened patch
+* Sem-Ver: bugfix Update the location of linux-hardened
+* Sem-Ver: api-break add support for linux-hardened
+* Switch to using the unofficial 4.9 grsecurity patches
+* Update the readme to note the use of the unofficial grsecurity 4.9 patches
+* Update pbr to version 3.0.1
+* Making a proper pypi package
+* fix requirements.txt
+* Add the Python script and requirements.txt file
+* Initial commit
