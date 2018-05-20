@@ -14,7 +14,7 @@ def main():
         '-p',
         '--patch',
         choices=choices,
-        default=choices[0],
+        default=choices[-1],
         help='The patch type to download(default: %(default)s)',
         dest='patch')
     args = parser.parse_args()
