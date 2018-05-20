@@ -35,9 +35,12 @@ def get_latest_unofficial_grsec_patch_and_sig_url():
     return download_url, sig_download_url
 
 
-def get_latest_linux_hardened_patch_and_sig_url():
-    url = ('https://api.github.com/repos/copperhead/'
-           'linux-hardened/releases/latest')
+def get_latest_linux_hardened_patch_and_sig_url(patch_name):
+    repo = 'copperhead'
+    if patch_name == 'linux-hardened-anthraxx':
+        repo = 'anthraxx'
+    url = ('https://api.github.com/repos/%s/'
+           'linux-hardened/releases/latest' % repo)
     response = requests.get(url)
     response.raise_for_status()
     data = response.json()
@@ -82,9 +85,9 @@ def extract_lzma_file(full_lzma_file_path, extract_to=None):
     l_file.close()
 
 
-def download_linux_hardened():
+def download_linux_hardened(patch_name):
     download_url, sig_download_url = (
-        get_latest_linux_hardened_patch_and_sig_url())
+        get_latest_linux_hardened_patch_and_sig_url(patch_name))
     kernel_version = re.match(
         r'linux\-hardened\-(?P<ver>[\d\.\d]+)\..*',
         download_url.split('/')[-1]

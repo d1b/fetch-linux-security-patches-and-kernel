@@ -9,7 +9,7 @@ from . import (
 def main():
     parser = argparse.ArgumentParser(
         description='Fetch a linux security kernel patch')
-    choices = ['unofficial-grsec', 'linux-hardened']
+    choices = ['unofficial-grsec', 'linux-hardened', 'linux-hardened-anthraxx']
     parser.add_argument(
         '-p',
         '--patch',
@@ -21,7 +21,7 @@ def main():
     if args.patch == choices[0]:
         download_grsec()
     else:
-        download_linux_hardened()
+        download_linux_hardened(args.patch)
 
 
 if __name__ == '__main__':
