@@ -55,11 +55,12 @@ def get_latest_linux_hardened_patch_and_sig_url(patch_name):
 
 
 def get_kernel_download_and_sig_url(kernel_version):
+    major_v = kernel_version.split('.')[0]
     return (
-        'https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-%s.tar.xz' %
-        kernel_version,
-        'https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-%s.tar.sign' %
-        kernel_version
+        'https://cdn.kernel.org/pub/linux/kernel/v%s.x/linux-%s.tar.xz' %
+        (major_v, kernel_version),
+        'https://cdn.kernel.org/pub/linux/kernel/v%s.x/linux-%s.tar.sign' %
+        (major_v, kernel_version)
     )
 
 
