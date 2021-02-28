@@ -90,7 +90,7 @@ def download_linux_hardened(patch_name):
     download_url, sig_download_url = (
         get_latest_linux_hardened_patch_and_sig_url(patch_name))
     kernel_version = re.match(
-        r'linux\-hardened\-(?P<ver>[\d\.\d]+)\..*',
+        r'linux\-hardened\-(?P<ver>[\d\.]+).*',
         download_url.split('/')[-1]
     ).group('ver')
     _download(download_url, sig_download_url, kernel_version)
